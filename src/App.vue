@@ -1,10 +1,11 @@
 <script setup>
-import TodoApp from './components/TodoApp.vue';
+import SelectRole from './components/SelectRole.vue';
 </script>
 
 <template>
   <div>
-    <TodoApp></TodoApp>
+    <!-- <TodoApp></TodoApp> -->
+    <SelectRole></SelectRole> <!-- ここでSelectRoleを使用 -->
   </div>
 </template>
 
