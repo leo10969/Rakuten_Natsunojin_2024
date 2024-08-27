@@ -1,11 +1,14 @@
 <script setup>
 import SelectRole from './components/SelectRole.vue';
+import VictimPage from './components/VictimPage.vue'; // Role 1のページ
+import SupPage from './components/SupPage.vue'; // Role 2のページ
 </script>
 
 <template>
   <div>
     <!-- <TodoApp></TodoApp> -->
-    <SelectRole></SelectRole> <!-- ここでSelectRoleを使用 -->
+    <!-- <SelectRole></SelectRole> ここでSelectRoleを使用 -->
+    <router-view></router-view>
   </div>
 </template>
 
