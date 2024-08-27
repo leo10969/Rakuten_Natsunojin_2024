@@ -1,7 +1,7 @@
 <script setup>
+import VictimInfo from './components/VictimInfo.vue';
 import SelectRole from './components/SelectRole.vue';
-import VictimPage from './components/VictimPage.vue'; // Role 1のページ
-import SupPage from './components/SupPage.vue'; // Role 2のページ
+import SupPage from './components/SupPage.vue';
 </script>
 
 <template>
