@@ -1,19 +1,23 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
+import express from 'express';
+import bodyParser from 'body-parser';
+import fs from 'fs';
+import path from 'path';
+import cors from 'cors';
 
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(bodyParser.json());
 
-// ユーザデータをJSONファイルに保存するAPI
+// ユーザデータをJSONフォルダに保存するAPI
 app.post('/api/save-user-data', (req, res) => {
   const userData = req.body;
-
-  // ファイルのパス
-  const filePath = path.join(__dirname, 'user-data.json');
+  const __dirname = path.resolve(); // 現在のディレクトリのパスを
+  // タイムスタンプを使用してユニークなファイル名を生成
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const fileName = `${userData.name || 'anonymous'}-${timestamp}.json`;
+  const filePath = path.join(__dirname, 'json', fileName); // jsonフォルダ内に保存
 
   // JSONファイルにデータを保存
   fs.writeFile(filePath, JSON.stringify(userData, null, 2), (err) => {
@@ -21,7 +25,7 @@ app.post('/api/save-user-data', (req, res) => {
       console.error("Error writing to file", err);
       return res.status(500).json({ message: 'Failed to save data' });
     }
-    res.status(200).json({ message: 'Data saved successfully' });
+    res.status(200).json({ message: `Data saved successfully as ${fileName}` });
   });
 });
 

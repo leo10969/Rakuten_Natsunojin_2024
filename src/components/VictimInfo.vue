@@ -69,7 +69,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'; // Vue Routerをインポート
@@ -113,8 +112,8 @@ const closeModal = () => {
 };
 
 // フォーム送信処理
-const submitForm = () => {
-  // フォームデータをJSONファイルとしてダウンロード
+const submitForm = async () => {
+  // フォームデータをオブジェクトとしてまとめる
   const formData = {
     name: name.value,
     email: email.value,
@@ -124,15 +123,33 @@ const submitForm = () => {
     region: region.value
   };
 
-  const jsonContent = JSON.stringify(formData);
-  const blob = new Blob([jsonContent], { type: 'application/json' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'userData.json';
-  link.click();
+  try {
+    // フォームデータをNode.jsサーバーに送信する
+    const response = await fetch('http://localhost:3000/api/save-user-data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
 
-  // 次のページにルーティング
-  router.push('/role1-2'); // 'next-page' は実際のルートに置き換えてください
+    if (response.ok) {
+      // データ送信成功後にJSONファイルをダウンロード（必要に応じて削除可）
+      const jsonContent = JSON.stringify(formData);
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'userData.json';
+      link.click();
+
+      // 次のページにルーティング
+      router.push('/role1-2');
+    } else {
+      console.error('Failed to save data on the server');
+    }
+  } catch (error) {
+    console.error('Error submitting form:', error);
+  }
 };
 </script>
 

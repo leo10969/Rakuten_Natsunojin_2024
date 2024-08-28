@@ -6,7 +6,7 @@ import VictimInfo from './components/VictimInfo.vue';
 
 const routes = [
   { path: '/', component: SelectRole },
-  {path: '/role1-1', component: VictimInfo},
+  { path: '/role1-1', component: VictimInfo},
   { path: '/role1-2', component: Victim },
   { path: '/role2', component: SupPage }
 ];
