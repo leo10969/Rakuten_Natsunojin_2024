@@ -16,7 +16,7 @@
 # end
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'http://localhost:3001'  # Vue.jsのURL
+    origins '*'  # Vue.jsのURL
     resource '*', headers: :any, methods: [:get, :post, :patch, :put, :delete, :options, :head]
   end
 end

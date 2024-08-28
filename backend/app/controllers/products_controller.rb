@@ -11,7 +11,9 @@ class ProductsController < ApplicationController
         itemPrice: item['itemPrice'],
         itemUrl: item['itemUrl'],
         mediumImageUrls: item['mediumImageUrls'],
-        shopName: item['shopName']
+        shopName: item['shopName'],
+        genreId: item['genreId'],
+        reviewAverage: item['reviewAverage']
       }
     end
 

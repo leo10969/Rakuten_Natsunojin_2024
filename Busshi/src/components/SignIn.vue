@@ -30,35 +30,36 @@ export default {
     const password = ref('');
     const errors = ref([]);
 
-    const signInUser = async () => {
-  errors.value = [];
+  const signInUser = async () => {
+    errors.value = [];
 
-  try {
-    const response = await axios.post('http://localhost:3000/users/sign_in', {
-      user: {
-        email: email.value,
-        password: password.value
+    try {
+      const response = await axios.post('http://localhost:3000/users/sign_in', {
+        user: {
+          email: email.value,
+          password: password.value
+        }
+      });
+      console.log('サインイン成功:', response.data);
+      
+      // ユーザー情報をVuexに保存
+      if (response.data.user) {
+        store.dispatch('login', response.data.user);
+        router.push('/products/search'); // リダイレクト先
+      } else {
+        console.error('ユーザーデータが取得できませんでした:', response.data);
+        errors.value.push('ユーザーデータが取得できませんでした。');
       }
-    });
-    console.log('サインイン成功:', response.data);
-    
-    // ユーザー情報をVuexに保存
-    if (response.data.user) {
-      store.dispatch('login', response.data.user);
-    } else {
-      console.error('ユーザーデータが取得できませんでした:', response.data);
-    }
-
-    router.push('/products/search'); // リダイレクト先
-  } catch (error) {
-    if (error.response && error.response.data.error) {
-      errors.value.push(error.response.data.error);
-    } else {
+    } catch (error) {
       console.error('サインインエラー:', error);
-      errors.value.push('メールアドレスまたはパスワードが正しくありません。');
+      if (error.response && error.response.data && error.response.data.error) {
+        errors.value.push(error.response.data.error);
+      } else {
+        errors.value.push('メールアドレスまたはパスワードが正しくありません。');
+      }
     }
-  }
-};
+  };
+
 
     return { email, password, errors, signInUser };
   }
