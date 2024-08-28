@@ -3,11 +3,9 @@ class SessionsController < Devise::SessionsController
     self.resource = warden.authenticate!(auth_options)
     if resource
       sign_in(resource_name, resource)
-      render json: { message: 'ログインに成功しました。' }, status: :ok
-    else
-      render json: { error: 'メールアドレスまたはパスワードが正しくありません。' }, status: :unprocessable_entity
+      render json: { user: resource, message: 'ログインに成功しました。' } # ユーザー情報とメッセージを返す
     end
-  rescue => e
-    render json: { error: e.message }, status: :internal_server_error
+  rescue
+    render json: { error: 'メールアドレスまたはパスワードが正しくありません。' }, status: :unauthorized
   end
 end
