@@ -1,29 +1,13 @@
 <template>
   <div>
-    <h1>ユーザー登録</h1>
+    <h1>User Products</h1>
 
-    <!-- エラーメッセージを表示 -->
-    <div v-if="errors.length">
-      <ul>
-        <li v-for="(error, index) in errors" :key="index" style="color: red;">
-          {{ error }}
-        </li>
-      </ul>
-    </div>
-
-    <form @submit.prevent="registerUser">
-      <div>
-        <label for="email">メールアドレス:</label>
-        <input id="email" type="email" v-model="user.email" required>
-      </div>
-      <div>
-        <label for="password">パスワード:</label>
-        <input id="password" type="password" v-model="user.password" required>
-      </div>
-
+    <!-- フィルタリングフォーム -->
+    <form @submit.prevent="applyFilters">
       <div>
         <label for="gender">性別:</label>
-        <select id="gender" v-model="user.gender">
+        <select id="gender" v-model="filters.gender">
+          <option value="">全て</option>
           <option value="male">男性</option>
           <option value="female">女性</option>
           <option value="other">その他</option>
@@ -32,78 +16,86 @@
 
       <div>
         <label for="age">年齢:</label>
-        <input id="age" type="number" v-model="user.age" placeholder="20">
+        <input id="age" type="number" v-model="filters.age" placeholder="20">
       </div>
 
       <div>
         <label for="prefecture">都道府県:</label>
-        <input id="prefecture" type="text" v-model="user.prefecture" placeholder="東京都">
+        <input id="prefecture" type="text" v-model="filters.prefecture" placeholder="東京都">
       </div>
 
       <div>
         <label for="city">市区町村:</label>
-        <input id="city" type="text" v-model="user.city" placeholder="新宿区">
+        <input id="city" type="text" v-model="filters.city" placeholder="新宿区">
       </div>
 
       <div>
-        <button type="submit">登録</button>
+        <button type="submit">フィルターを適用</button>
       </div>
     </form>
+
+    <!-- フィルタリング結果の表示 -->
+    <ul>
+      <li v-for="(count, name) in filteredProductCounts" :key="name">
+        {{ name }}: {{ count }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
 import axios from 'axios';
 
 export default {
-  setup() {
-    const router = useRouter();
-    const store = useStore();
-
-    // `user` と `errors` を `ref` で定義
-    const user = ref({
-      email: '',
-      password: '',
-
-      gender: '',
-      age: null,
-      prefecture: '',
-      city: ''
-
-    });
-    const errors = ref([]);
-
-    const registerUser = async () => {
-      errors.value = []; // 以前のエラーをクリア
-      console.log('送信するユーザーデータ:', user.value);
-      try {
-        const response = await axios.post('http://localhost:3000/users', {
-          user: user.value
-        });
-        console.log('登録成功:', response);
-
-        // 登録後、ユーザー情報をVuexに保存
-        store.dispatch('login', response.data.user);
-
-        // 検索ページにリダイレクト
-        router.push('/register/success');
-      } catch (error) {
-        if (error.response && error.response.data.errors) {
-          errors.value = error.response.data.errors; // エラーメッセージを格納
-        } else {
-          console.error('登録エラー:', error);
-        }
+  data() {
+    return {
+      products: [],
+      filters: {
+        gender: '',
+        age: null,
+        prefecture: '',
+        city: ''
       }
     };
-
-    return {
-      user,
-      errors,
-      registerUser,
-    };
+  },
+  created() {
+    this.fetchProducts();
+  },
+  methods: {
+    fetchProducts() {
+      axios.get('/user_products')
+        .then(response => {
+          this.products = Array.isArray(response.data) ? response.data : response.data?.data;
+        })
+        .catch(error => {
+          console.error("There was an error fetching the products!", error);
+        });
+    },
+    applyFilters() {
+      // フィルター適用時の追加処理が必要であればここに記述
+    }
+  },
+  computed: {
+    filteredProducts() {
+      return this.products.filter(product => {
+        return (!this.filters.gender || product.gender === this.filters.gender) &&
+               (!this.filters.age || product.age == this.filters.age) &&
+               (!this.filters.prefecture || product.prefecture.includes(this.filters.prefecture)) &&
+               (!this.filters.city || product.city.includes(this.filters.city));
+      });
+    },
+    filteredProductCounts() {
+      const counts = {};
+      this.filteredProducts.forEach(product => {
+        const name = product.product_name;
+        if (counts[name]) {
+          counts[name]++;
+        } else {
+          counts[name] = 1;
+        }
+      });
+      return counts;
+    }
   }
 };
 </script>
