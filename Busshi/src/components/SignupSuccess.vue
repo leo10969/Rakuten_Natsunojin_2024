@@ -15,10 +15,10 @@
 <script setup>
 import { useRouter } from 'vue-router'; // Vue Routerをインポート
 const router = useRouter();
-const buttonText1 = '商品を探す';
+const buttonText1 = 'サインインする';
 
 const navigateToRole1 = () => {
-  router.push('/products/search'); // victimのページに遷移
+  router.push('/users/sign_in'); // サインインのページに遷移
 };
 </script>
 
