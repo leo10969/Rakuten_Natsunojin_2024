@@ -1,5 +1,10 @@
 class UserProductsController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
+
+  def index
+    @user_products = UserProduct.all
+    render json: @user_products
+  end
 
   def create
     @user_product = UserProduct.new(user_product_params)
