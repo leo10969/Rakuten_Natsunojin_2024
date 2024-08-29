@@ -38,7 +38,7 @@
             }
           });
           console.log('サインイン成功:', response.data);
-          router.push('/'); // リダイレクト先
+          router.push('/products/search'); // リダイレクト先
         } catch (error) {
           if (error.response && error.response.data.error) {
             errors.value.push(error.response.data.error);

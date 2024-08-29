@@ -49,6 +49,7 @@
             user: this.user
           });
           console.log('登録成功:', response);
+          this.$router.push('/register/success'); // 登録成功時に遷移。後述
         } catch (error) {
           if (error.response && error.response.data.errors) {
             this.errors = error.response.data.errors; // エラーメッセージを格納
@@ -56,7 +57,7 @@
             console.error('登録エラー:', error);
           }
         }
-      }
+      },
     }
   };
   </script>
